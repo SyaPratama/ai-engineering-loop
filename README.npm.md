@@ -2,7 +2,7 @@
 
 [![NPM Version](https://img.shields.io/npm/v/ai-engineering-loop.svg?color=cb3837)](https://www.npmjs.com/package/ai-engineering-loop)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-black.svg)](https://github.com/egagofur/ai-engineering-loop)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black.svg)](https://github.com/SyaPratama/ai-engineering-loop)
 
 **A Reusable, Framework-Agnostic AI Engineering Operating System for Safe Coding Agents**
 
@@ -12,48 +12,48 @@ Move beyond linear AI pipelines and optimistic self-evaluation toward contract-d
 
 ## Quickstart CLI
 
-Run the CLI in any repository root without global installation:
+Run the CLI from this fork in any repository root without global installation:
 
 ```bash
 # 1. Bootstrap .ai-engineering-loop/ context from repository discovery
-npx ai-engineering-loop init
+npx github:SyaPratama/ai-engineering-loop init
 
 # 2. Check the validity, readiness, and baseline freshness of context
-npx ai-engineering-loop status
+npx github:SyaPratama/ai-engineering-loop status
 
 # 3. Reconcile drifted context against repository non-destructively
-npx ai-engineering-loop refresh
+npx github:SyaPratama/ai-engineering-loop refresh
 
 # 4. Verify context readiness and begin engineering loop
-npx ai-engineering-loop run
+npx github:SyaPratama/ai-engineering-loop run
 
 # Optional: analysis without repository mutation
-npx ai-engineering-loop run --mode report-only "audit this repository"
+npx github:SyaPratama/ai-engineering-loop run --mode report-only "audit this repository"
 
 # Inspect spend controls; ASSISTED is the default
-npx ai-engineering-loop policy show
-npx ai-engineering-loop budget status
-npx ai-engineering-loop policy set --review-profile lean
-npx ai-engineering-loop context query createStudioRun
-npx ai-engineering-loop context fast-path --json
-npx ai-engineering-loop context diff-hunks --run <run-id>
-npx ai-engineering-loop verification summarize --run <run-id>
-npx ai-engineering-loop context compact --run <run-id>
+npx github:SyaPratama/ai-engineering-loop policy show
+npx github:SyaPratama/ai-engineering-loop budget status
+npx github:SyaPratama/ai-engineering-loop policy set --review-profile lean
+npx github:SyaPratama/ai-engineering-loop context query createStudioRun
+npx github:SyaPratama/ai-engineering-loop context fast-path --json
+npx github:SyaPratama/ai-engineering-loop context diff-hunks --run <run-id>
+npx github:SyaPratama/ai-engineering-loop verification summarize --run <run-id>
+npx github:SyaPratama/ai-engineering-loop context compact --run <run-id>
 
 # Author and observe deterministic workflow recipes locally
-npx ai-engineering-loop studio
+npx github:SyaPratama/ai-engineering-loop studio
 
 # Export a redacted, integrity-bound knowledge handoff
-npx ai-engineering-loop handoff create --audience developer
+npx github:SyaPratama/ai-engineering-loop handoff create --audience developer
 
 # 5. Copy package host skills into ~/.claude ~/.grok ~/.gemini ~/.agents
 #    Default: core pack (ai-engineering-loop skill, DA/Judge agents, commands).
 #    Optional: --pack backend,design (saved for later syncs); --prune removes them again.
-npx ai-engineering-loop sync-hosts
-npx ai-engineering-loop sync-hosts --pack backend,design
+npx github:SyaPratama/ai-engineering-loop sync-hosts
+npx github:SyaPratama/ai-engineering-loop sync-hosts --pack backend,design
 
 # Read one packaged spec instead of the whole package source
-npx ai-engineering-loop docs grill-policy --section "When to grill"
+npx github:SyaPratama/ai-engineering-loop docs grill-policy --section "When to grill"
 ```
 
 ---
@@ -95,10 +95,10 @@ In Antigravity IDE or compatible agentic platforms, invoke the loop directly in 
 
 For the complete architectural specifications, project profiles (`web-app`, `backend-api`, `mobile-app`, `library`, `monorepo`), delivery adapters (GitLab, GitHub, Mattermost), and reference examples:
 
-👉 **[Visit the GitHub Repository](https://github.com/egagofur/ai-engineering-loop)**
+👉 **[Visit the GitHub Repository](https://github.com/SyaPratama/ai-engineering-loop)**
 
 ---
 
 ## License
 
-MIT License — see [LICENSE](https://github.com/egagofur/ai-engineering-loop/blob/main/LICENSE) for details.
+MIT License — see [LICENSE](https://github.com/SyaPratama/ai-engineering-loop/blob/main/LICENSE) for details.
