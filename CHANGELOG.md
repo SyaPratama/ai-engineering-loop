@@ -4,6 +4,8 @@ All notable changes to this project are documented here. Versions follow [Semant
 
 ## Unreleased
 
+## 2.11.0 - 2026-04-11
+
 - **Added:** `ael specialist <domain> --prompt` — a read-only domain consultant per `core/software-baseline.md` (16 domains). It prints the spawn prompt plus that one domain's trap table; `devil-advocate`/`judge` are reserved and fail with `RESERVED_AGENT`. Consultant output never fills a review gate. Domain ids are validated against the baseline's own table (`docs software-baseline --section "Specialist domains"`).
 - **Added:** fact memory — `ael learn` also writes `.ai-engineering-loop/facts.json` (commands that exited 0 against a diff, and findings a review marked INVALID), and `ael recall "<query>" [--json]` queries it. A fact whose files changed since its Run is reported stale and is never evidence (schema: `schemas/facts.schema.json`).
 - **Added:** optional repository graph — `ael graph status|build|query "<text>"` uses graphify when installed (`SKIPPED` with the install command otherwise) and caches `graphify-out/graph.json` as `.ai-engineering-loop/graph/graph.json`. `EXTRACTED` edges are evidence; `INFERRED` edges are `[INFERENCE]`.

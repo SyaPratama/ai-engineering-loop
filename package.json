@@ -1,6 +1,6 @@
 {
   "name": "ai-engineering-loop",
-  "version": "2.10.1",
+  "version": "2.11.0",
   "description": "A visual workspace that helps AI coding agents plan, build, review, and ship reliable software.",
   "main": "bin/ai-engineering-loop.js",
   "bin": {
@@ -49,7 +49,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/egagofur/ai-engineering-loop.git"
+    "url": "git+https://github.com/SyaPratama/ai-engineering-loop.git"
   },
   "keywords": [
     "ai-agents",
@@ -64,9 +64,12 @@
     "subagents"
   ],
   "author": "Ega Gofur",
+  "contributors": [
+    "SyaPratama"
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/egagofur/ai-engineering-loop/issues"
+    "url": "https://github.com/SyaPratama/ai-engineering-loop/issues"
   },
-  "homepage": "https://github.com/egagofur/ai-engineering-loop#readme"
+  "homepage": "https://github.com/SyaPratama/ai-engineering-loop#readme"
 }
