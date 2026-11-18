@@ -119,6 +119,17 @@ test('Judge body is identical on Claude Code, Grok, and Antigravity', () => {
   }
 });
 
+test('Specialist body is identical on Claude Code, Grok, and Antigravity', () => {
+  const shared = readRepo('agents/shared/specialist.body.md').replace(/\s+$/, '');
+  for (const [label, text] of [
+    ['.claude/agents/specialist.md', readRepo('.claude/agents/specialist.md')],
+    ['.grok/agents/specialist.md', readRepo('.grok/agents/specialist.md')],
+    ['antigravity-md', antigravityAgent('specialist')]
+  ]) {
+    assert.strictEqual(bodyAfterFrontmatter(text), shared, label);
+  }
+});
+
 test('Judge budget is the same on Claude Code, Grok, and Antigravity', () => {
   for (const body of [readRepo('.claude/agents/judge.md'), readRepo('.grok/agents/judge.md'), antigravityAgent('judge')]) {
     assert.match(body, /Budget \(hard stop\)/);

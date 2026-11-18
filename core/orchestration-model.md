@@ -89,6 +89,26 @@ See [docs/grok-cli-feasibility.md](../docs/grok-cli-feasibility.md).
 
 ---
 
+## 4c. Domain Specialist Dispatch
+
+A specialist is a **read-only domain consultant**, not a reviewer. It applies one section of `docs software-baseline` to the diff and returns findings; it never returns a verdict and never edits.
+
+| Question | Answer |
+|---|---|
+| Where do domains live? | `core/software-baseline.md`, section "Specialist domains". `ael specialist --json` lists them; nothing else may invent one. |
+| How is one spawned? | `ael specialist <domain> --files <a,b> [--diff <path>] --prompt` prints the exact spawn prompt plus that one section. |
+| Can it replace DA or Judge? | **Never.** `ael specialist devil-advocate` fails with `RESERVED_AGENT`; specialist output cannot fill a review gate. |
+| What comes back? | Findings with a quoted observation and a layer (L1/L2/L3), plus `UNKNOWNS`. |
+| When the task spans several domains | Spawn **one specialist per domain in a single batch**, then merge their reports. Never serialize independent domains, and never re-dispatch a domain whose report is already in the Run. |
+
+### Wave dispatch (several tasks at once)
+
+`node ready --json` returns the READY wave: nodes whose dependencies all passed. They are independent by construction, so the host spawns them in **one batch** and merges results in `mergeOrder` (plan `order`, then `id`) — the same graph always produces the same state bytes. Never serialize a wave, and never start a node that is not READY (`assertReady` rejects it with the blocking dependency named).
+
+A wave is a dispatch hint, not a parallel executor: the runtime records each node's own start/complete, so evidence stays per-node even when two children ran at once.
+
+Specialist reports feed the Maker and the Devil's Advocate. They are evidence *inputs*; the verification gate still reads only `verification.json`, and the Judge still reads only the Goal Contract, evidence, and Finding Ledger.
+
 ## 5. Truthful Reporting Output
 
 When `CONTEXT_ISOLATION_ONLY` applies, the review report header is:

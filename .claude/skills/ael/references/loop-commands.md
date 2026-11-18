@@ -7,6 +7,13 @@
 
 - Never run `update apply|auto|rollback|policy` unless the user asks; the CLI applies updates itself under the user's policy (`docs runtime-safety`).
 
+## Parallel work and reuse
+
+- `node ready --json`: the current READY wave. Every node in it has all dependencies passed, so spawn them **as one batch** (host subagent tool, `tasks` array), never in sequence. Merge results in `mergeOrder` (plan order, then id) so two runs of the same graph produce the same state. `node status --json` when the wave is empty.
+- `specialist <domain> --prompt`: one read-only domain consultant per baseline domain, also spawned as a batch. Never a substitute for the Devil's Advocate or the Judge (`RESERVED_AGENT`).
+- `recall "<query>" --json`: what past Runs proved (a command that exited 0 against a diff) or refuted (a finding marked INVALID). Re-derive rather than re-guess; a fact listed as stale changed since its Run and is not evidence.
+- `graph status|build|query "<text>"`: repository graph via graphify when installed, `SKIPPED` otherwise. `EXTRACTED` edges are evidence; `INFERRED` is `[INFERENCE]`.
+
 ## Harness health and history
 
 Run these when the user asks how the loop is doing, before planning work, or when a gate points at them. All read local Run files; none starts a Run.

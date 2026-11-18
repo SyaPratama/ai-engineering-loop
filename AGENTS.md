@@ -42,8 +42,11 @@ Full pre-publish gate: `npm run check:skills && npm test && npm run doctor && np
 | `lib/claimed-vs-reality.js` | claimed-vs-reality parsing and the L1/L2/L3 rules |
 | `lib/cli-args.js` | flag allowlist for commands that write files |
 | `skill-src/ael/` | skill template and stage references (source of truth) |
-| `agents/` | DA, Judge, Maker specs; `agents/shared/` = runtime prompt bodies |
+| `agents/` | DA, Judge, Maker, specialist specs; `agents/shared/` = runtime prompt bodies |
 | `core/`, `policies/` | specs served by `ael docs <name>` |
+| `lib/specialists.js` | domain registry + specialist prompt/validation (`core/software-baseline.md` = the 16 domains) |
+| `lib/facts.js` | fact memory (`.ai-engineering-loop/facts.json`), `ael recall`, context-pack injection |
+| `lib/graph.js` | optional graphify adapter (`ael graph build|query`) |
 | `schemas/` | JSON Schemas for Run artifacts |
 | `evals/` | judgment cases and bench scenarios |
 | `docs/cards/`, `docs/board.md` | improvement cards and their status |

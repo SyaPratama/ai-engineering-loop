@@ -87,6 +87,9 @@ const guard = lazyModule('../lib/guard.js');
 const guardHooks = lazyModule('../lib/guard-hooks.js');
 const receipts = lazyModule('../lib/receipt.js');
 const { learn } = lazyFunctions('../lib/learn.js');
+const specialists = lazyModule('../lib/specialists.js');
+const facts = lazyModule('../lib/facts.js');
+const graph = lazyModule('../lib/graph.js');
 const {
   runBench,
   compareBenches,
@@ -2092,6 +2095,40 @@ function handleNode() {
         for (const node of result.nodes) {
           console.log(`${String(node.order).padStart(2)} ${node.id}: ${node.status}`);
         }
+      }
+      return;
+    }
+    if (action === 'ready') {
+      const workflow = workflowStatus(CWD, { runId });
+      // One wave = every node the runtime currently marks READY. Nodes are
+      // independent by construction (all their dependencies passed), so the
+      // host may spawn them in a single batch; order is stable by plan order.
+      const ready = workflow.plan.nodes
+        .filter((node) => workflow.state.nodes[node.id]?.status === 'READY')
+        .map((node) => {
+          const state = workflow.state.nodes[node.id];
+          return {
+            id: node.id,
+            type: node.type,
+            order: node.order,
+            displayName: node.displayName || null,
+            attempts: state.attempts,
+            parallel: (node.dependsOn || []).length > 0
+          };
+        })
+        .sort((left, right) => left.order - right.order || left.id.localeCompare(right.id));
+      const result = {
+        ok: true,
+        runId: workflow.run.runId,
+        wave: ready.length,
+        ready,
+        mergeOrder: ready.map((node) => node.id)
+      };
+      if (json) console.log(JSON.stringify(result));
+      else if (!ready.length) console.log('No READY node. Inspect `node status`.');
+      else {
+        console.log(`Ready wave (${ready.length} node(s), spawn as one batch, merge in this order):`);
+        for (const node of ready) console.log(`  ${String(node.order).padStart(2)} ${node.id} (${node.type})`);
       }
       return;
     }
@@ -4309,11 +4346,14 @@ function handleLearn() {
     });
     const { document } = result;
     const candidates = require('../lib/rules.js').promotionCandidates(CWD, document.entries);
+    const factDocument = facts.collectFacts(CWD);
+    const factResult = result.written ? facts.writeFacts(CWD, factDocument) : { path: facts.FACTS_FILE, verified: factDocument.verified.length, refuted: factDocument.refuted.length };
     if (json) {
-      console.log(JSON.stringify({ ok: true, written: result.written, path: result.path, pruned: result.pruned, promotionCandidates: candidates, learnings: document }));
+      console.log(JSON.stringify({ ok: true, written: result.written, path: result.path, pruned: result.pruned, promotionCandidates: candidates, learnings: document, facts: factResult }));
       return;
     }
     log.success(`✓ ${document.entries.length} learning(s) from ${document.sourceRuns} Run(s)${result.written ? ` → ${result.path}` : ' (dry run, nothing written)'}`);
+    console.log(`  facts: ${factResult.verified} verified command(s), ${factResult.refuted} refuted claim(s)${result.written ? ` → ${factResult.path}` : ''}`);
     for (const entry of document.entries.slice(0, 10)) {
       console.log(`- ${entry.id} [${entry.axis}, ${entry.severity}, ×${entry.occurrences}] ${entry.lesson}`);
     }
@@ -4346,6 +4386,116 @@ function handleDocs() {
   } catch (err) {
     log.error(`${err.code || 'DOCS_FAILED'}: ${err.message}`);
     process.exitCode = 1;
+  }
+}
+
+// Command: specialist (read-only domain consultant prompt from software-baseline)
+function handleSpecialist() {
+  const root = path.join(__dirname, '..');
+  const json = process.argv.includes('--json');
+  const target = process.argv[3] && !process.argv[3].startsWith('--') ? process.argv[3] : null;
+  try {
+    if (!target) {
+      const domains = specialists.listDomains(root);
+      if (json) {
+        console.log(JSON.stringify({ ok: true, doc: specialists.BASELINE_DOC, domains }, null, 2));
+        return;
+      }
+      for (const domain of domains) console.log(`${domain.id.padEnd(30)} ${domain.section}`);
+      return;
+    }
+    specialists.assertDispatchable(root, target);
+    const files = String(argValue('--files') || '').split(',').map((item) => item.trim()).filter(Boolean);
+    const spawn = specialists.spawnPrompt(root, target, {
+      files,
+      diff: argValue('--diff'),
+      goal: argValue('--goal')
+    });
+    const promptOnly = process.argv.includes('--prompt');
+    if (json) console.log(JSON.stringify({ ok: true, domain: spawn.domain, prompt: spawn.prompt, section: spawn.text }, null, 2));
+    else if (promptOnly) process.stdout.write(`${spawn.prompt}\n`);
+    else process.stdout.write(`${spawn.prompt}\n\n---\n\n${spawn.text}\n`);
+  } catch (err) {
+    log.error(`${err.code || 'SPECIALIST_FAILED'}: ${err.message}`);
+    if (err.why) log.error(`WHY: ${err.why}`);
+    if (err.fix) log.error(`FIX: ${err.fix}`);
+    process.exitCode = 1;
+  }
+}
+
+// Command: graph (optional repository graph via graphify; never a dependency)
+function handleGraph() {
+  const json = process.argv.includes('--json');
+  const action = process.argv[3] && !process.argv[3].startsWith('--') ? process.argv[3] : 'status';
+  try {
+    if (action === 'status') {
+      const result = graph.status(CWD);
+      if (json) console.log(JSON.stringify({ ok: true, ...result }, null, 2));
+      else {
+        console.log(`graphify: ${result.graphify ? `available (${result.binary})` : 'not installed'}`);
+        if (result.graph?.error) console.log(`graph: unreadable (${result.graph.error})`);
+        else if (result.graph) console.log(`graph: ${result.graph.nodes} node(s), ${result.graph.edges} edge(s) → ${result.graph.file}`);
+        else console.log('graph: not built yet (run `ael graph build`)');
+        if (!result.graphify) console.log(`install: ${result.install}`);
+      }
+      return;
+    }
+    if (action === 'build') {
+      const result = graph.build(CWD, { run: !process.argv.includes('--plan') });
+      if (json) console.log(JSON.stringify({ ok: result.status !== 'SKIPPED', ...result }, null, 2));
+      else if (result.status === 'BUILT') log.success(`✓ graph built: ${result.nodes} node(s), ${result.edges} edge(s) → ${result.file}`);
+      else if (result.status === 'PLANNED') console.log(`would run: ${result.command.join(' ')} (output ${result.output})`);
+      else {
+        console.log(`graph build SKIPPED (${result.reason}); falling back to ${result.fallback}`);
+        console.log(`install: ${result.install}`);
+        if (result.detail) console.log(`detail: ${result.detail}`);
+      }
+      if (result.status === 'SKIPPED') process.exitCode = 0;
+      return;
+    }
+    if (action === 'query') {
+      const text = process.argv.slice(4).filter((item) => !item.startsWith('--')).join(' ');
+      const result = graph.query(CWD, text, { limit: Number(argValue('--limit')) || 20 });
+      if (json) console.log(JSON.stringify({ ok: true, ...result }, null, 2));
+      else {
+        for (const node of result.nodes) console.log(`- ${node.label || node.id} [${node.fileType || '?'}] ${node.file}`);
+        for (const edge of result.edges) console.log(`  ${edge.from} --${edge.relation}--> ${edge.to} [${edge.confidence}]`);
+        if (!result.nodes.length && !result.edges.length) console.log('No match in the graph. Try a broader symbol or file name.');
+      }
+      return;
+    }
+    throw new Error(`Unknown graph action "${action}". Use status, build, or query.`);
+  } catch (err) {
+    log.error(`${err.code || 'GRAPH_FAILED'}: ${err.message}`);
+    if (err.why) log.error(`WHY: ${err.why}`);
+    if (err.fix) log.error(`FIX: ${err.fix}`);
+    process.exitCode = 1;
+  }
+}
+
+// Command: recall (facts proved or refuted by past Runs)
+function handleRecall() {
+  const json = process.argv.includes('--json');
+  const query = process.argv[3] && !process.argv[3].startsWith('--') ? process.argv[3] : '';
+  try {
+    const result = facts.recall(CWD, query, {
+      limit: 20,
+      includeStale: process.argv.includes('--stale')
+    });
+    if (json) {
+      console.log(JSON.stringify({ ok: true, ...result }, null, 2));
+      return;
+    }
+    const label = result.query ? ` for "${result.query}"` : '';
+    log.success(`facts from ${result.sourceRuns} Run(s)${label}: ${result.verified.length} current, ${result.staleCount} stale, ${result.refuted.length} refuted`);
+    for (const fact of result.verified) {
+      console.log(`- [${fact.layer || 'L?'}] ${fact.command}  (${fact.runId}, diff ${fact.diffHash.slice(0, 12)})`);
+    }
+    for (const fact of result.stale) console.log(`  stale: ${fact.command} (${fact.staleReasons.join('; ')})`);
+    for (const fact of result.refuted) console.log(`  refuted: ${fact.claim} — ${fact.location || 'no location'}`);
+    if (!result.verified.length && !result.refuted.length) console.log('  No facts yet. Run `ael learn` after a delivered Run.');
+  } catch (err) {
+    stageJsonError(err, json, 'RECALL_FAILED');
   }
 }
 
@@ -4517,6 +4667,17 @@ Commands:
   docs         Print a packaged spec without needing the package source tree
                list [--json]
                <name> [--section <heading>] [--json]   e.g. docs grill-policy --section "When to grill"
+  graph        Optional repository graph via graphify (not a dependency; skipped when absent)
+               status [--json]
+               build [--plan] [--json]        runs graphify, caches graph.json in .ai-engineering-loop/graph/
+               query "<text>" [--limit <n>] [--json]   matches symbols and edges; EXTRACTED edges are evidence
+  recall       Query what past Runs proved (commands that exited 0) or refuted (INVALID findings)
+               [<query>] [--stale] [--json]   matches command text or file path; stale = file changed since the Run
+               written by learn to .ai-engineering-loop/facts.json; current facts ride in maker/DA context packs
+  specialist   List the software-baseline domains, or print one spawn prompt (read-only consultant)
+               [--json]                      list domain ids, sections, and the baseline doc
+               <domain> [--files <a,b>] [--diff <path>] [--goal <path>] [--prompt] [--json]
+               one domain per spawn; devil-advocate and judge are reserved (RESERVED_AGENT)
   doctor       Check runtime, schemas, host assets, package contents, and eval catalog
                --harness   audit harness debt instead: entry-file size/structure, stale learnings, rule provenance, skill budget
                --json      print machine-readable diagnostics
@@ -4707,6 +4868,15 @@ switch (command) {
     break;
   case 'docs':
     handleDocs();
+    break;
+  case 'specialist':
+    handleSpecialist();
+    break;
+  case 'recall':
+    handleRecall();
+    break;
+  case 'graph':
+    handleGraph();
     break;
   case 'verify':
     handleVerify();
