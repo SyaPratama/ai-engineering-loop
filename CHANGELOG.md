@@ -14,6 +14,19 @@ All notable changes to this project are documented here. Versions follow [Semant
 - **Added:** facts ride in maker/DA context packs (≤3, inside the 10% token share) alongside learnings.
 - **Added:** `core/token-budget.md` documents rtk/caveman/ponytail and the rule that evidence stays raw.
 
+## 2.11.0 - 2026-11-18
+
+From pstack (cards C-29..C-36 in `docs/cards/proof-not-prose-2026-11-18.md`): less human re-checking, because the CLI runs the proof instead of trusting prose.
+
+- **Added:** finding proofs (C-29): a VALID BLOCKER/HIGH finding may carry `proof.command`; `gate review` runs it and records `proofStatus`. A proof that passes (`not_reproduced`) stops the finding from blocking; destructive or timed-out proofs keep it blocking. Results in `runs/<id>/proofs.json`; ablation component `proofs`.
+- **Added:** `safety record` (C-30): the one fact a change is safe because of, with a proof level 1–5. T2 Judge PASS needs level 4+ (a passing proof command).
+- **Added:** `learn promote --prove <commit>` (C-31): the new check must fail on the commit that introduced the mistake; `doctor --harness` lists unproven rules.
+- **Added:** premise check (C-32): an ITERATE that repeats the previous explicit `cause` needs `premise: {statement, test}`.
+- **Added:** `measurement record` and AC `measure: true` (C-33): PASS needs 3+ runs, a limiter, and spread below the effect.
+- **Added:** `doctor --harness` warns on feature-map paths that match no file (C-34); `formal_covers` in verification.md adds the `formal` key to default `verify` when covered code changes (C-35).
+- **Added:** `stats` and `recap` report human interventions per Run and the share of finding proofs that reproduced (C-36).
+- **Changed:** T2 runs now need a recorded safety fact before Judge PASS.
+
 ## 2.10.1 - 2026-11-17
 
 - **Fixed:** after a Judge `ITERATE`, `verify` refused to record evidence for the new Maker diff ("Verification has already passed its gate") and `gate verification` rejected the old evidence's diff hash, so the Run could not continue. The iteration's verification files now move to `runs/<id>/iterations/<n>/` and the next iteration starts with a fresh bundle.
