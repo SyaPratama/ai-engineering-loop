@@ -27,4 +27,6 @@ Before claiming "done", "fixed", "passing", or "ready", run the proving command 
 | Bug fixed | passing red repro, command shown |
 | AC met | claimed-vs-reality cites output |
 
-After `verify`, continue from (and give reviewers) run-summary.md and verification-summary.json.
+## Raw evidence only
+
+Compressed output never evidence; re-run via `verify` (`docs token-budget`). `ael recall` facts expire when files change. `ael graph`/`ael specialist` cite `EXTRACTED` only; never reviewer. After `verify`, continue from run-summary.md.

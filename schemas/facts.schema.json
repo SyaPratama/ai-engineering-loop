@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/egagofur/ai-engineering-loop/schemas/facts.schema.json",
+  "title": "AI Engineering Loop Project Facts",
+  "description": "What past Runs proved (a command that exited 0 against a diff hash) or refuted (a finding marked INVALID). Written by `learn`, queried by `recall`.",
+  "type": "object",
+  "required": ["schemaVersion", "generator", "sourceRuns", "verified", "refuted"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "generator": { "type": "string" },
+    "sourceRuns": { "type": "integer", "minimum": 0 },
+    "latestRunId": { "type": ["string", "null"] },
+    "verified": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "command", "runId", "diffHash", "files"],
+        "properties": {
+          "kind": { "const": "verified" },
+          "command": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "layer": { "enum": ["L1", "L2", "L3", null] },
+          "runId": { "type": "string", "minLength": 1 },
+          "gitRevision": { "type": ["string", "null"] },
+          "diffHash": { "type": "string", "minLength": 1 },
+          "recordedAt": { "type": "string" },
+          "files": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "refuted": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "claim", "runId"],
+        "properties": {
+          "kind": { "const": "refuted" },
+          "claim": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "reason": { "type": "string", "maxLength": 200 },
+          "location": { "type": "string", "maxLength": 200 },
+          "runId": { "type": "string", "minLength": 1 },
+          "recordedAt": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
