@@ -9,7 +9,7 @@
 It plans, builds, tests its own claims, lets a Devil’s Advocate attack the result, and waits for your approval before anything ships. Your project and its evidence stay on your machine.
 
 [![npm](https://img.shields.io/npm/v/ai-engineering-loop?style=flat-square&color=28AD00)](https://www.npmjs.com/package/ai-engineering-loop)
-[![GitHub release](https://img.shields.io/github/v/release/egagofur/ai-engineering-loop?style=flat-square&color=28AD00)](https://github.com/egagofur/ai-engineering-loop/releases)
+[![GitHub release](https://img.shields.io/github/v/release/SyaPratama/ai-engineering-loop?style=flat-square&color=28AD00)](https://github.com/SyaPratama/ai-engineering-loop/releases)
 [![license](https://img.shields.io/badge/license-MIT-181c19?style=flat-square)](LICENSE)
 [![website](https://img.shields.io/badge/site-ael.egagofur.studio-fc6404?style=flat-square)](https://ael.egagofur.studio)
 
@@ -389,7 +389,7 @@ npm run doctor
 
 ## License
 
-MIT © [Ega Gofur](https://github.com/egagofur)
+MIT © [Ega Gofur](https://github.com/egagofur) · Fork maintained by [SyaPratama](https://github.com/SyaPratama)
 
 <div align="center">
 
