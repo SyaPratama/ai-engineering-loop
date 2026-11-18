@@ -4,7 +4,7 @@ All notable changes to this project are documented here. Versions follow [Semant
 
 ## Unreleased
 
-## 2.11.0 - 2026-04-11
+## 2.11.0 - 2026-11-18
 
 - **Added:** `ael specialist <domain> --prompt` — a read-only domain consultant per `core/software-baseline.md` (16 domains). It prints the spawn prompt plus that one domain's trap table; `devil-advocate`/`judge` are reserved and fail with `RESERVED_AGENT`. Consultant output never fills a review gate. Domain ids are validated against the baseline's own table (`docs software-baseline --section "Specialist domains"`).
 - **Added:** fact memory — `ael learn` also writes `.ai-engineering-loop/facts.json` (commands that exited 0 against a diff, and findings a review marked INVALID), and `ael recall "<query>" [--json]` queries it. A fact whose files changed since its Run is reported stale and is never evidence (schema: `schemas/facts.schema.json`).
@@ -13,8 +13,6 @@ All notable changes to this project are documented here. Versions follow [Semant
 - **Added:** parallel dispatch — `node ready --json` lists the READY wave (all nodes whose dependencies passed) with a stable `mergeOrder`; spawn them as one batch and merge in that order.
 - **Added:** facts ride in maker/DA context packs (≤3, inside the 10% token share) alongside learnings.
 - **Added:** `core/token-budget.md` documents rtk/caveman/ponytail and the rule that evidence stays raw.
-
-## 2.11.0 - 2026-11-18
 
 From pstack (cards C-29..C-36 in `docs/cards/proof-not-prose-2026-11-18.md`): less human re-checking, because the CLI runs the proof instead of trusting prose.
 
