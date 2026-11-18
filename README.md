@@ -29,7 +29,13 @@ AI Engineering Loop puts every task on one gated path and keeps the receipts. Yo
 
 ## Get started in a minute
 
-Run the command above in any project. Then tell your coding agent:
+Run this in any project:
+
+```bash
+npx github:SyaPratama/ai-engineering-loop init
+```
+
+Then tell your coding agent:
 
 > Use AI Engineering Loop to build this feature: **your idea here**
 
@@ -38,7 +44,7 @@ That is the intended experience. You do not need to memorize the internal comman
 Want the visual workspace?
 
 ```bash
-npx ai-engineering-loop studio
+npx github:SyaPratama/ai-engineering-loop studio
 ```
 
 Workflow Studio opens locally in your browser and follows the active Run live. Your project and run evidence stay on your machine.
